@@ -6,7 +6,8 @@ defined( 'ABSPATH' ) || exit;
 
 function rangefinder_security_headers() {
 	if ( is_admin() ) {
-		return; // wp-admin already sets its own stricter headers; avoid double-sending.
+		rangefinder_admin_security_headers();
+		return;
 	}
 
 	$font_cdn = 'https://fonts.cdnfonts.com';
@@ -41,3 +42,37 @@ function rangefinder_security_headers() {
 	header_remove( 'X-Powered-By' );
 }
 add_action( 'send_headers', 'rangefinder_security_headers' );
+
+/**
+ * Stricter header set for wp-admin/wp-login: no external CDNs, clickjacking
+ * fully denied (rather than same-origin), longer-lived HSTS.
+ */
+function rangefinder_admin_security_headers() {
+	$csp = implode(
+		'; ',
+		array(
+			"default-src 'self'",
+			"script-src 'self' 'unsafe-inline'",
+			"style-src 'self' 'unsafe-inline'",
+			"font-src 'self'",
+			"img-src 'self' data:",
+			"connect-src 'self'",
+			"object-src 'none'",
+			"base-uri 'self'",
+			"frame-ancestors 'none'",
+		)
+	);
+
+	header( "Content-Security-Policy: {$csp}" );
+	header( 'X-Content-Type-Options: nosniff' );
+	header( 'X-Frame-Options: DENY' );
+	header( 'Referrer-Policy: strict-origin-when-cross-origin' );
+	header( 'Permissions-Policy: geolocation=(), microphone=(), camera=()' );
+
+	if ( is_ssl() ) {
+		header( 'Strict-Transport-Security: max-age=31536000; includeSubDomains' );
+	}
+
+	header_remove( 'X-Powered-By' );
+}
+add_action( 'login_init', 'rangefinder_admin_security_headers' );

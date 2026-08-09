@@ -57,3 +57,4 @@ require get_template_directory() . '/inc/customizer.php';
 require get_template_directory() . '/inc/stripe-merch.php';
 require get_template_directory() . '/inc/security-headers.php';
 require get_template_directory() . '/inc/admin-dashboard.php';
+require get_template_directory() . '/inc/announcements-api.php';

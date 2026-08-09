@@ -67,6 +67,7 @@ Each content row links straight to **Manage** (the WordPress list table) and **A
 | `inc/customizer.php` | Theme Customizer fields (hero, story, contact, footer links) |
 | `inc/security-headers.php` | Sends CSP/HSTS/X-Frame-Options/etc. response headers (see Security below) |
 | `inc/admin-dashboard.php` | Café Dashboard admin page (status, Stripe check, content counts/quick-links) |
+| `inc/announcements-api.php` | `/wp-json/rangefinder/v1/announcements` REST CRUD over the News/Events CPT |
 | `js/main.js` | Font scaling, contrast toggle, slider, live status polling, Stripe checkout |
 
 Staff/admin auth uses WordPress core login (`wp-login.php`) and the `manage_options` capability — no custom auth code.
@@ -86,16 +87,41 @@ WordPress core handles everything a hand-rolled Node/Express stack would otherwi
 
 ## Security
 
-`inc/security-headers.php` sends response headers on every front-end request; the table below maps each relevant OWASP Top 10 risk to how it's mitigated in this stack (WordPress-native, not a Node middleware chain):
+`inc/security-headers.php` sends response headers on every request, with a stricter policy for wp-admin/wp-login than the public site:
+
+| Header | Front-end | wp-admin / wp-login |
+|---|---|---|
+| `Content-Security-Policy` | Allows `fonts.cdnfonts.com`, OpenStreetMap, and Stripe Checkout | `'self'` only — blocks all external CDNs |
+| `X-Frame-Options` | `SAMEORIGIN` | `DENY` (stricter for admin) |
+| `Strict-Transport-Security` | `max-age=63072000; includeSubDomains; preload` (HTTPS only) | `max-age=31536000; includeSubDomains` (HTTPS only) |
+| `X-Content-Type-Options` | `nosniff` | `nosniff` |
+| `Referrer-Policy` | `strict-origin-when-cross-origin` | `strict-origin-when-cross-origin` |
+
+The table below maps each relevant OWASP Top 10 risk to how it's mitigated in this stack (WordPress-native, not a Node middleware chain):
 
 | OWASP Risk | Mitigation |
 |---|---|
 | A02 Cryptographic Failures | WordPress core hashes passwords with a salted, iterated hash (bcrypt-backed in modern WordPress/PHP); session auth cookies are signed with `AUTH_KEY`/`AUTH_SALT` from `wp-config.php` |
 | A03 Injection | All admin-settings input passes through `sanitize_text_field`/`esc_url_raw`/etc. sanitize callbacks ([inc/settings-page.php](wp-content/themes/rangefinder-coffee/inc/settings-page.php), [inc/stripe-merch.php](wp-content/themes/rangefinder-coffee/inc/stripe-merch.php)); no raw SQL, `eval`, or `exec` in the theme |
-| A05 Security Misconfiguration | `inc/security-headers.php` sets CSP, `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`, and HSTS (when served over HTTPS); `docker/php/security.ini` sets `expose_php = Off` to drop the `X-Powered-By` signature |
+| A05 Security Misconfiguration | `inc/security-headers.php` sets CSP, `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`, and HSTS (when served over HTTPS), with a stricter admin-only policy above; `docker/php/security.ini` sets `expose_php = Off` to drop the `X-Powered-By` signature |
 | A06 Vulnerable/Outdated Components | No third-party PHP packages (no Composer deps to fall behind on); keep WordPress core and any installed plugins updated via wp-admin or `make cli ARGS="core update"` |
-| A07 Identification & Authentication Failures | Admin-only actions require the `manage_options` capability; WordPress core already rate-limits/locks out repeated failed logins with common security plugins, and applies constant-time password comparison internally |
+| A07 Identification & Authentication Failures | Admin-only actions require the `manage_options`/`edit_posts` capability; WordPress core already rate-limits/locks out repeated failed logins with common security plugins, and applies constant-time password comparison internally |
 | A08 Software & Data Integrity Failures | Settings are saved via the WordPress Settings API (`options.php`), which validates nonces and capabilities before any write; no custom partial-file writes in this theme |
+
+## Announcements / Events REST API
+
+`inc/announcements-api.php` exposes CRUD over the **News/Events** post type under `/wp-json/rangefinder/v1/announcements`. Deletes use WordPress's native Trash instead of a custom soft-delete flag, so recovery is already handled by WordPress core (`Posts > News/Events > Trash`) rather than a bespoke Recycle Bin.
+
+| Endpoint | Method | Auth required | What It Does |
+|---|---|---|---|
+| `/wp-json/rangefinder/v1/announcements` | GET | No | List the latest 20 announcements (News/Events posts) |
+| `/wp-json/rangefinder/v1/announcements` | POST | Yes (`edit_posts`) | Create an announcement |
+| `/wp-json/rangefinder/v1/announcements/:id` | PUT | Yes (`edit_posts`) | Update an announcement by post ID |
+| `/wp-json/rangefinder/v1/announcements/:id` | DELETE | Yes (`edit_posts`) | Soft-delete (moves to Trash) |
+
+Write requests must be authenticated the standard WordPress REST way (logged-in cookie + `X-WP-Nonce`, or an [application password](https://make.wordpress.org/core/2020/11/05/application-passwords-integration-guide/) for external clients) — there's no separate custom auth layer to maintain.
+
+> Note: a broader library-style admin portal (branch hours, bookmobile staff, DNS/hosting info, analytics, calendars, etc.) was suggested at one point but doesn't apply to this single-location coffee shop project, so it wasn't built here.
 
 ## Automatic backups
 
