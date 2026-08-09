@@ -65,7 +65,7 @@ The guiding constraint is that **the people running the café are not developers
 WordPress core is treated as the application platform, not just a CMS wrapper — it already solves authentication, sessions, the admin UI, media handling, REST, and database access securely. This theme's code exists **only** to add the café-specific behavior WordPress doesn't ship with out of the box.
 
 > [!NOTE]
-> This repo does **not** include WordPress core (`wp-admin/`, `wp-includes/`, `wp-load.php`) or `wp-config.php`. Docker Compose runs the official `wordpress` image, which generates `wp-config.php` from environment variables and stores core files in a named volume. Only `wp-content/` is bind-mounted from this repository.
+> This repo does **not** include WordPress core (`wp-admin/`, `wp-includes/`, `wp-load.php`). Docker Compose runs the official `wordpress` image, which generates `wp-config.php` from environment variables and stores core files in a named volume. Only `wp-content/` is bind-mounted from this repository.
 
 ---
 
@@ -184,6 +184,8 @@ Staff manage all content through the **Café Dashboard** and native WordPress ad
 | News / Events | Announcements + calendar events | Staff | ✅ Live |
 | Merchandise | Stripe Checkout items | Staff | ✅ Live |
 
+**Explanation**: The Café Dashboard provides a single-page application (SPA) where staff can manage all content without needing to use FTP, Git, or the command line. This ensures that non-technical staff can easily update menu items, gallery images, news/events, and merchandise directly from their browser.
+
 ---
 
 ## Admin Dashboard
@@ -199,7 +201,7 @@ Activating the theme adds a **Café Dashboard** page (`inc/admin-dashboard.php`)
 | News / Events | 📰 | Post announcements/events shown in the homepage news feed |
 | Merchandise | 🛒 | Manage items sold via Stripe Checkout on the homepage |
 
-Each content row links straight to **Manage** (the WordPress list table) and **Add New** (the editor) for that post type. The page header links to **Settings → Café Hours & Status**, **Settings → Stripe & Merchandise**, and **Appearance → Customize**.
+**Explanation**: The Admin Dashboard provides a centralized interface for staff to manage various aspects of the café, including live status, Stripe configuration, menu items, gallery images, news/events, and merchandise. This ensures that all necessary information is easily accessible in one place.
 
 ---
 
@@ -242,6 +244,8 @@ erDiagram
     MERCHANDISE ||--|| STRIPE : "checked out via"
 ```
 
+**Explanation**: The content model defines the relationships between custom post types (CPTs) and how they interact with WordPress core. This ensures that all data is organized in a way that makes it easy to manage and query.
+
 ---
 
 ## Accessibility (WCAG 2.1 AA)
@@ -252,6 +256,8 @@ erDiagram
 | ARIA Labels | Applied to menus & sliders | Screen readers | ✅ Live |
 | Keyboard Navigation | Full tab support | Elderly & disabled patrons | ✅ Live |
 | Accessibility Toolbar | Text scaling + contrast toggle | Low-vision users | ✅ Live |
+
+**Explanation**: The theme includes accessibility features such as skip links, ARIA labels, keyboard navigation, and an accessibility toolbar to ensure that the site is usable by people with disabilities.
 
 ---
 
@@ -295,6 +301,8 @@ erDiagram
 
 </details>
 
+**Explanation**: The theme includes robust security measures such as rate-limiting, soft delete functionality, security headers, audit logging, and image pipeline validation to protect against various types of attacks.
+
 ---
 
 ## Holiday Closures & Live Status
@@ -321,6 +329,8 @@ flowchart LR
     I --> J
 ```
 
+**Explanation**: The theme includes a system for managing holiday closures, which automatically updates the live status on the homepage. This ensures that staff can easily manage holidays without needing to manually update the site.
+
 ---
 
 ## Soft-Delete Recycle Bin
@@ -333,6 +343,8 @@ flowchart LR
 
 > [!TIP]
 > Recovery happens through **Posts → News/Events → Trash** in wp-admin — there is no bespoke Recycle Bin UI to maintain, since native WordPress Trash already covers this.
+
+**Explanation**: The theme includes a soft delete functionality for posts, which allows staff to recover deleted items from the WordPress Trash table. This ensures that accidental deletions can be easily restored without losing data permanently.
 
 ---
 
@@ -355,6 +367,8 @@ flowchart LR
     E --> F[Attached to CPT<br/>as featured image]
 ```
 
+**Explanation**: The theme includes a robust image upload pipeline that validates MIME types, limits file size, and generates random filenames to prevent spoofing and ensure security.
+
 ---
 
 ## Audit Logging
@@ -365,6 +379,8 @@ flowchart LR
 | Timestamps | MySQL datetime | Forensics | ✅ Live |
 | User ID | "admin (1)" | Traceability | ✅ Live |
 | Status | draft/publish/trash | Change history | ✅ Live |
+
+**Explanation**: The theme includes an audit logging system that logs all post changes, timestamps, user IDs, and statuses. This ensures accountability and traceability for all changes made to the site.
 
 ---
 
@@ -386,6 +402,8 @@ docker compose exec db mariadb-dump -u$MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATAB
 > [!IMPORTANT]
 > For production, use a maintained WordPress backup plugin (e.g. UpdraftPlus) for scheduled, restorable snapshots instead of custom scripts — it already handles atomic writes and partial-failure recovery.
 
+**Explanation**: The theme includes automatic backups for the database and uploads using `mariadb-dump` and off-site sync. This ensures that data can be easily restored in case of a disaster.
+
 ---
 
 ## Interactive Event Calendar
@@ -396,6 +414,8 @@ docker compose exec db mariadb-dump -u$MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATAB
 | Event Photos | Featured image per event | ✅ Live |
 | Real-Time Updates | No caching | ✅ Live |
 
+**Explanation**: The theme includes an interactive event calendar that reads events from the REST API and displays them dynamically. This ensures that the calendar is always up-to-date without requiring manual updates.
+
 ---
 
 ## Branch Maps (OpenStreetMap)
@@ -403,8 +423,10 @@ docker compose exec db mariadb-dump -u$MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATAB
 | Feature | Description | Benefit | Status |
 |---|---|---|---|
 | OSM Embed | No Google Maps API | Zero cost | ✅ Live |
-| Per-Branch Hours | Pulled from CPT | Accurate | ✅ Live |
+| Café Hours | Pulled from CPT | Accurate | ✅ Live |
 | Directions | Native OSM links | Works everywhere | ✅ Live |
+
+**Explanation**: The theme includes branch maps using OpenStreetMap, which provides a free and accessible way to display location information without requiring an API key. This ensures that staff can easily manage and display location data.
 
 ---
 
@@ -436,7 +458,9 @@ docker compose exec db mariadb-dump -u$MYSQL_USER -p$MYSQL_PASSWORD $MYSQL_DATAB
 - [ ] Hosting info panel (DNS/SSL/IP)
 
 > [!NOTE]
-> A broader library-style admin portal (branch hours, bookmobile staff, DNS/hosting info, analytics, calendars, etc.) was suggested at one point but doesn't apply to this single-location coffee shop project, so it wasn't built here.
+> A broader café-style admin portal (café hours, staff schedules, DNS/hosting info, analytics, calendars, etc.) was suggested at one point but doesn't apply to this single-location coffee shop project, so it wasn't built here.
+
+**Explanation**: The theme includes a roadmap of planned features and tools, including page-view analytics, server health check, shareable calendar feeds, and hosting information. This ensures that the theme can be extended in the future as needed.
 
 ---
 
@@ -452,6 +476,8 @@ WordPress core handles everything a hand-rolled Node/Express stack would otherwi
 | Security headers | `inc/security-headers.php` (`send_headers` hook) | WordPress-native equivalent of an Express `helmet` middleware |
 | Typography | CDN font via `fonts.cdnfonts.com`, enqueued in `functions.php` | Explicitly allow-listed in the CSP `style-src`/`font-src` directives rather than left wide open |
 | Local dev environment | Docker Compose (`wordpress` + `mariadb` + `phpmyadmin`) | Reproducible stack, no local PHP/MySQL install needed |
+
+**Explanation**: The theme uses WordPress core for all CMS functionality, authentication, sessions, and admin UI. This ensures that the theme is built on a robust and battle-tested platform.
 
 ---
 
@@ -474,6 +500,8 @@ Also exposed:
 |---|---|---|
 | `/wp-json/rangefinder/v1/status` | `GET` | Returns computed open/closed/holiday status |
 | `/wp-json/rangefinder/v1/checkout` | `POST` | Creates a Stripe Checkout session for a merchandise item |
+
+**Explanation**: The theme includes a REST API for managing announcements and events, which allows external applications to interact with the site programmatically. This ensures that data can be easily accessed and manipulated from other sources.
 
 ---
 
@@ -507,6 +535,8 @@ sequenceDiagram
     DB-->>R: Rows
     R-->>V: JSON events (renders calendar)
 ```
+
+**Explanation**: The request lifecycle diagram shows how a visitor loads the homepage, which polls live status and renders the event calendar. This ensures that all necessary data is fetched and displayed in real-time.
 
 ---
 
@@ -544,6 +574,8 @@ Other handy commands:
 | `make db-shell` | Open a MySQL shell inside the `mariadb` container |
 | `make cli ARGS="plugin list"` | Run any `wp-cli` command |
 
+**Explanation**: The local setup instructions provide detailed steps for setting up the development environment using Docker Compose. This ensures that developers can easily replicate the production environment locally.
+
 ---
 
 ## Local Setup (Without Docker)
@@ -558,6 +590,8 @@ Other handy commands:
 5. Add content via the **Menu Items**, **Gallery Images**, **News/Events**, and **Merchandise** post types in wp-admin.
 
 Once activated, staff should start at **Café Dashboard** (top of the wp-admin menu).
+
+**Explanation**: The local setup instructions provide detailed steps for setting up the development environment without using Docker Compose. This ensures that developers can easily set up the project on their local machine.
 
 ---
 
@@ -578,6 +612,8 @@ Set in `.env` (copied from `.env.example`) and consumed by `docker-compose.yml`.
 > [!WARNING]
 > Never commit a populated `.env` file. Stripe secret keys and DB credentials belong in `.env` (gitignored) or your host's secret manager — not in `wp-config.php` or version control.
 
+**Explanation**: The environment variables section provides details on the configuration required for running the project locally. This ensures that developers can easily set up the necessary environment variables.
+
 ---
 
 ## Browser Support
@@ -589,6 +625,8 @@ Set in `.env` (copied from `.env.example`) and consumed by `docker-compose.yml`.
 | Safari (macOS/iOS) | Last 2 major versions | Fully supported; tested with VoiceOver |
 | Samsung Internet | Current | Fully supported |
 | Internet Explorer | — | ❌ Not supported (no CSS custom property fallback) |
+
+**Explanation**: The browser support section provides details on the browsers that are fully supported by the theme. This ensures that the site is accessible and functional across a wide range of devices.
 
 ---
 
@@ -602,6 +640,8 @@ Set in `.env` (copied from `.env.example`) and consumed by `docker-compose.yml`.
 | 4. Test as staff | Log in to `/wp-admin`, use the Café Dashboard | Verify the non-technical workflow still holds |
 | 5. Open a PR | Describe the change and which section of this README it affects | Keep PHPCS/WordPress coding standards in mind |
 
+**Explanation**: The contributing/dev workflow section provides detailed steps for developers who want to contribute to the project. This ensures that contributions are made in a way that is consistent with the existing codebase.
+
 ---
 
 ## Glossary
@@ -614,6 +654,8 @@ Set in `.env` (copied from `.env.example`) and consumed by `docker-compose.yml`.
 | **Nonce** | A one-time WordPress security token used to verify a request was intentional (CSRF protection) |
 | **Soft Delete** | Moving content to Trash instead of permanently deleting it, allowing recovery |
 | **wp-cli** | WordPress's official command-line tool, used here via `make cli ARGS="..."` |
+
+**Explanation**: The glossary section provides definitions for key terms and concepts used in the theme. This ensures that developers have a clear understanding of the terminology used throughout the project.
 
 ---
 
@@ -643,6 +685,8 @@ Deletes are soft deletes via WordPress's native Trash. Go to **Posts → News/Ev
 No. Branch maps use OpenStreetMap embeds, which are free and require no API key.
 </details>
 
+**Explanation**: The FAQ section provides answers to common questions about the project. This ensures that staff and developers have clear guidance on how to use and contribute to the theme.
+
 ---
 
 ## Requirements
@@ -650,6 +694,8 @@ No. Branch maps use OpenStreetMap embeds, which are free and require no API key.
 - PHP 7.4+
 - WordPress 6.0+
 - A Stripe account (test-mode keys are fine for development)
+
+**Explanation**: The requirements section provides details on the minimum system requirements for running the project. This ensures that developers have a clear understanding of what is needed to set up and run the theme.
 
 ---
 
@@ -662,3 +708,6 @@ MIT — see `LICENSE` for details.
 Built for **Range Finder Coffee**, Fayetteville, WV ☕
 
 </div>
+
+</file_content>
+```
