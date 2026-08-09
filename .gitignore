@@ -26,6 +26,7 @@ wp-content/mu-plugins/*
 # Env/secrets and local tooling
 .env
 .env.*
+!.env.example
 *.log
 vendor/
 composer.lock

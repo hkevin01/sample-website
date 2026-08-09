@@ -1,0 +1,21 @@
+name: PHP Lint
+
+on:
+  push:
+    paths:
+      - "wp-content/themes/rangefinder-coffee/**.php"
+  pull_request:
+    paths:
+      - "wp-content/themes/rangefinder-coffee/**.php"
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+      - name: Lint PHP files
+        run: |
+          find wp-content/themes/rangefinder-coffee -name "*.php" -print0 | xargs -0 -n1 php -l

@@ -33,6 +33,7 @@ services:
       - wordpress_data:/var/www/html
       - ./wp-content:/var/www/html/wp-content
       - ./docker/php/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini:ro
+      - ./docker/php/security.ini:/usr/local/etc/php/conf.d/security.ini:ro
 
   wpcli:
     image: wordpress:cli-php8.2

@@ -39,7 +39,9 @@ function rangefinder_widgets_init() {
 add_action( 'widgets_init', 'rangefinder_widgets_init' );
 
 function rangefinder_enqueue_assets() {
-	wp_enqueue_style( 'rangefinder-style', get_stylesheet_uri(), array(), '1.0.0' );
+	// CDN webfont for headings; allowed via the CSP style-src/font-src rules in inc/security-headers.php.
+	wp_enqueue_style( 'rangefinder-font-poppins', 'https://fonts.cdnfonts.com/css/poppins', array(), null );
+	wp_enqueue_style( 'rangefinder-style', get_stylesheet_uri(), array( 'rangefinder-font-poppins' ), '1.0.0' );
 	wp_enqueue_script( 'rangefinder-main', get_template_directory_uri() . '/js/main.js', array(), '1.0.0', true );
 	wp_localize_script( 'rangefinder-main', 'rangefinderData', array(
 		'statusEndpoint'   => esc_url_raw( rest_url( 'rangefinder/v1/status' ) ),
@@ -53,3 +55,5 @@ require get_template_directory() . '/inc/settings-page.php';
 require get_template_directory() . '/inc/status-helper.php';
 require get_template_directory() . '/inc/customizer.php';
 require get_template_directory() . '/inc/stripe-merch.php';
+require get_template_directory() . '/inc/security-headers.php';
+require get_template_directory() . '/inc/admin-dashboard.php';
