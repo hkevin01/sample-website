@@ -1,6 +1,6 @@
 <?php
 /**
- * Custom post types: News/Events, Gallery Images, Café Menu Items.
+ * Custom post types: News/Events, Gallery Images, Café Menu Items, Holiday Closures.
  */
 defined( 'ABSPATH' ) || exit;
 
@@ -45,6 +45,19 @@ function rangefinder_register_post_types() {
 		'menu_icon'    => 'dashicons-coffee',
 		'supports'     => array( 'title', 'editor' ),
 	) );
+
+	register_post_type( 'holiday', array(
+		'labels' => array(
+			'name'          => 'Holiday Closures',
+			'singular_name' => 'Holiday Closure',
+			'add_new_item'  => 'Add New Holiday Closure',
+		),
+		'public'       => false,
+		'show_ui'      => true,
+		'show_in_rest' => true,
+		'menu_icon'    => 'dashicons-calendar-alt',
+		'supports'     => array( 'title', 'editor' ),
+	) );
 }
 add_action( 'init', 'rangefinder_register_post_types' );
 
@@ -83,3 +96,39 @@ function rangefinder_menu_item_price_save( $post_id ) {
 	}
 }
 add_action( 'save_post_cafe_menu_item', 'rangefinder_menu_item_price_save' );
+
+/**
+ * "Closed" checkbox meta box for holiday closures.
+ */
+function rangefinder_holiday_closed_box() {
+	add_meta_box(
+		'rangefinder_holiday_closed',
+		'Closure Details',
+		function ( $post ) {
+			wp_nonce_field( 'rangefinder_holiday_closed_save', 'rangefinder_holiday_closed_nonce' );
+			$is_closed = get_post_meta( $post->ID, '_is_closed', true );
+			echo '<label for="rangefinder_holiday_closed_field">';
+			echo '<input type="checkbox" id="rangefinder_holiday_closed_field" name="rangefinder_holiday_closed" value="1"' . checked( $is_closed, '1', false ) . ' /> ';
+			echo 'Business is closed on this date';
+			echo '</label>';
+		},
+		'holiday',
+		'side'
+	);
+}
+add_action( 'add_meta_boxes', 'rangefinder_holiday_closed_box' );
+
+function rangefinder_holiday_closed_save( $post_id ) {
+	if ( ! isset( $_POST['rangefinder_holiday_closed_nonce'] ) ||
+		! wp_verify_nonce( $_POST['rangefinder_holiday_closed_nonce'], 'rangefinder_holiday_closed_save' ) ) {
+		return;
+	}
+	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+		return;
+	}
+	if ( ! current_user_can( 'edit_post', $post_id ) ) {
+		return;
+	}
+	update_post_meta( $post_id, '_is_closed', isset( $_POST['rangefinder_holiday_closed'] ) ? '1' : '' );
+}
+add_action( 'save_post_holiday', 'rangefinder_holiday_closed_save' );
