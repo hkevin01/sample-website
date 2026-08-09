@@ -1,3 +1,4 @@
+<file_content>
 <div align="center">
 
 # ☕ Range Finder Coffee — WordPress Theme
