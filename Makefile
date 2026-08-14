@@ -1,34 +1,31 @@
-.PHONY: up down restart logs cli shell db-shell activate-theme install
-
 up:
 	docker compose up -d
-
+ 
 down:
 	docker compose down
-
-restart:
-	docker compose restart
-
-logs:
-	docker compose logs -f wordpress
-
-# Usage: make cli ARGS="plugin list"
-cli:
-	docker compose run --rm wpcli $(ARGS)
-
-shell:
-	docker compose exec wordpress bash
-
-db-shell:
-	docker compose exec db mariadb -u$${MYSQL_USER:-wordpress} -p$${MYSQL_PASSWORD:-changeme} $${MYSQL_DATABASE:-wordpress}
-
-install:
-	docker compose run --rm wpcli core install \
-		--url="http://localhost:$${WORDPRESS_PORT:-8080}" \
+ 
+install: up
+	make install-wordpress
+ 
+install-wordpress:
+	docker compose run --rm wpcli wp core install \
+		--url=http://localhost:8080 \
 		--title="Range Finder Coffee" \
 		--admin_user=admin \
-		--admin_password=admin \
-		--admin_email=admin@example.com
-
+		--admin_password=admin123 \
+		--admin_email=admin@example.com \
+		--skip-email
+ 
 activate-theme:
-	docker compose run --rm wpcli theme activate rangefinder-coffee
+	docker compose run --rm wpcli wp theme activate rangefinder-coffee
+ 
+customize-site:
+	docker compose run --rm wpcli wp option update blogname "Range Finder Coffee"
+	docker compose run --rm wpcli wp option update blogdescription ""
+	docker compose run --rm wpcli wp menu create "Primary Menu"
+	docker compose run --rm wpcli wp menu item add-post Primary Menu 42
+	docker compose run --rm wpcli wp menu location assign Primary Menu primary
+ 
+publish-changes:
+	docker compose run --rm wpcli wp post update 1 --post_status=publish
+ 

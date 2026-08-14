@@ -16,6 +16,8 @@ wp-content/upgrade/
 wp-content/cache/
 wp-content/backup-db/
 wp-content/blogs.dir/
+images/
+scripts/
 
 # Third-party drop-ins (keep folders, ignore contents)
 wp-content/plugins/*

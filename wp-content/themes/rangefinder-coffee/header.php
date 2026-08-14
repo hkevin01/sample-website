@@ -15,7 +15,7 @@
 		<div class="toolbar-controls">
 			<button class="toolbar-btn" id="font-dec" aria-label="Decrease Text Size">A-</button>
 			<button class="toolbar-btn" id="font-inc" aria-label="Increase Text Size">A+</button>
-			<button class="toolbar-btn" id="contrast-toggle" aria-label="Toggle High Contrast Mode">Contrast Mode</button>
+			<button class="toolbar-btn" id="contrast-toggle" aria-label="Toggle High Contrast Mode" aria-pressed="false">Contrast Mode</button>
 		</div>
 	</div>
 
@@ -25,7 +25,8 @@
 	$hero_style = $hero_image ? ' style="--hero-image:url(' . esc_url( $hero_image ) . ');"' : '';
 	?>
 	<!-- 2. TITLE & VISUAL GRAPHIC HERO -->
-	<header class="<?php echo esc_attr( $hero_class ); ?>" role="banner"<?php echo $hero_style; ?>>
+	<!-- <header> is already an implicit "banner" landmark here (not nested in <article>/<aside>), so no explicit role is needed -->
+	<header class="<?php echo esc_attr( $hero_class ); ?>"<?php echo $hero_style; ?>>
 		<h1><?php bloginfo( 'name' ); ?></h1>
 		<p><?php echo esc_html( get_theme_mod( 'hero_tagline', 'Dialed-in Specialty Espresso & Community Hub in Fayetteville, West Virginia' ) ); ?></p>
 	</header>
@@ -34,19 +35,22 @@
 	<nav class="menu-bar" aria-label="Main business navigation">
 		<?php
 		if ( has_nav_menu( 'primary' ) ) {
+			// wp_nav_menu() automatically marks the active item with aria-current="page"
+			// (WordPress core since 5.5) and a "current-menu-item" class — no extra code needed.
 			wp_nav_menu( array(
 				'theme_location' => 'primary',
 				'container'      => false,
 				'menu_class'     => 'menu-nav',
 			) );
 		} else {
+			$is_front = is_front_page();
 			?>
 			<ul class="menu-nav">
-				<li><a href="<?php echo esc_url( home_url( '/' ) ); ?>">Home</a></li>
+				<li><a href="<?php echo esc_url( home_url( '/' ) ); ?>"<?php echo $is_front ? ' aria-current="page"' : ''; ?>>Home</a></li>
 				<li><a href="#menu-highlights">Menu</a></li>
 				<li><a href="#services">Services</a></li>
 				<li><a href="#gallery">Gallery</a></li>
-				<li><a href="#news">News/Events</a></li>
+				<li><a href="#shop">Merchandise</a></li>
 				<li><a href="#footer">Contact Us</a></li>
 			</ul>
 			<?php
