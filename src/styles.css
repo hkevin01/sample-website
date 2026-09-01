@@ -169,7 +169,8 @@ img {
 
 .info-panel,
 .menu-card,
-.visit-card {
+.visit-card,
+.feature-card {
   background: var(--surface);
   border: 1px solid rgba(63, 42, 29, 0.08);
   border-radius: 1.25rem;
@@ -179,6 +180,34 @@ img {
 
 .info-panel {
   min-height: 200px;
+}
+
+.feature-card {
+  padding: 1.5rem 1.25rem;
+  border-top: 4px solid var(--brand-terracotta);
+}
+
+.feature-card h3 {
+  margin-top: 1rem;
+  margin-bottom: 0.75rem;
+  color: var(--brand-brown-strong);
+  font-size: 1.35rem;
+}
+
+.feature-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.9rem;
+  background: #f8efe8;
+  color: var(--brand-terracotta);
+  font-size: 1.4rem;
+}
+
+.max-w-700 {
+  max-width: 700px;
 }
 
 .icon {
