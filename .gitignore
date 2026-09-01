@@ -1,37 +1,12 @@
-wp-config.php
 node_modules/
-.DS_Store
-
-# WordPress core (not tracked; this repo only holds wp-content)
-/wp-admin/
-/wp-includes/
-/index.php
-/wp-*.php
-wp-content/db.php
-
-# Uploaded/generated content
-wp-content/uploads/*
-!wp-content/uploads/.gitkeep
-wp-content/upgrade/
-wp-content/cache/
-wp-content/backup-db/
-wp-content/blogs.dir/
-images/
-scripts/
-
-# Third-party drop-ins (keep folders, ignore contents)
-wp-content/plugins/*
-!wp-content/plugins/.gitkeep
-wp-content/mu-plugins/*
-!wp-content/mu-plugins/.gitkeep
-
-# Env/secrets and local tooling
+dist/
+.vite/
 .env
 .env.*
 !.env.example
+.DS_Store
+coverage/
 *.log
-vendor/
-composer.lock
 .vscode/
 .idea/
 
