@@ -248,6 +248,88 @@ img {
   margin-bottom: 0;
 }
 
+.commerce-section {
+  background: #fff8f0;
+}
+
+.commerce-note {
+  color: var(--brand-muted);
+  font-weight: 600;
+}
+
+.commerce-note i {
+  color: #2d9d65;
+  margin-right: 0.45rem;
+}
+
+.commerce-panel {
+  background: #fff;
+  border: 1px solid rgba(63, 42, 29, 0.1);
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.commerce-label,
+.commerce-status {
+  color: var(--brand-terracotta);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.12rem;
+  text-transform: uppercase;
+}
+
+.pickup-steps {
+  display: grid;
+  gap: 1.1rem;
+  padding-left: 1.4rem;
+  margin-top: 1.25rem;
+}
+
+.pickup-steps li {
+  padding-left: 0.3rem;
+}
+
+.pickup-steps strong,
+.pickup-steps span {
+  display: block;
+}
+
+.pickup-steps span {
+  color: var(--brand-muted);
+  margin-top: 0.2rem;
+}
+
+.product-card {
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid rgba(63, 42, 29, 0.08);
+  border-radius: 1.1rem;
+  box-shadow: 0 12px 24px rgba(38, 22, 14, 0.06);
+}
+
+.product-card img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+}
+
+.product-card h3 {
+  color: var(--brand-brown-strong);
+  font-size: 1.4rem;
+  margin-bottom: 0.35rem;
+}
+
+.product-card strong {
+  color: var(--brand-brown);
+  white-space: nowrap;
+}
+
+.product-card p {
+  color: var(--brand-muted);
+  min-height: 3.5rem;
+}
+
 .carousel {
   max-width: 980px;
   margin: 0 auto;

@@ -38,6 +38,8 @@
             <li class="nav-item"><a class="nav-link active" href="#home">Home</a></li>
             <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
             <li class="nav-item"><a class="nav-link" href="#menu">Menu</a></li>
+            <li class="nav-item"><a class="nav-link" href="#order">Order</a></li>
+            <li class="nav-item"><a class="nav-link" href="#shop">Shop</a></li>
             <li class="nav-item"><a class="nav-link" href="#gallery">Gallery</a></li>
             <li class="nav-item"><a class="nav-link" href="#visit">Visit</a></li>
           </ul>
@@ -284,6 +286,52 @@
         </div>
       </section>
 
+      <section id="order" class="py-5 commerce-section">
+        <div class="container">
+          <div class="row align-items-center g-4">
+            <div class="col-lg-7">
+              <p class="eyebrow text-uppercase text-primary">Skip the line</p>
+              <h2 class="section-title">Order coffee for pickup.</h2>
+              <p class="lead">Choose your favorites online, select a pickup time, and walk in when your order is ready.</p>
+              <p class="commerce-note"><i class="bi bi-shield-check"></i> Pickup payments and order fulfillment are securely handled by Square.</p>
+              <a id="pickup-order-link" class="btn btn-primary btn-lg" href="#" target="_blank" rel="noreferrer">
+                <i class="bi bi-bag-check me-2"></i>Order pickup
+              </a>
+            </div>
+            <div class="col-lg-5">
+              <div class="commerce-panel h-100">
+                <span class="commerce-label">Pickup flow</span>
+                <ol class="pickup-steps mb-0">
+                  <li><strong>Choose</strong><span>Build your order in Square.</span></li>
+                  <li><strong>Pay</strong><span>Checkout uses Square's secure payment page.</span></li>
+                  <li><strong>Collect</strong><span>We prepare it for the time you selected.</span></li>
+                </ol>
+                <p id="pickup-order-status" class="small text-body-secondary mt-3 mb-0" role="status"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="shop" class="py-5 bg-body-secondary">
+        <div class="container">
+          <div class="d-flex justify-content-between align-items-end flex-wrap gap-3 mb-4">
+            <div>
+              <p class="eyebrow text-uppercase text-primary">Take the feeling home</p>
+              <h2 class="section-title mb-2">Coffee, goods, and gifts.</h2>
+              <p class="mb-0 text-body-secondary">Browse beans and hometown merchandise from our online shop.</p>
+            </div>
+            <span id="shop-status" class="commerce-status" role="status"></span>
+          </div>
+          <div id="shop-products" class="row g-4" aria-live="polite"></div>
+          <div class="text-center mt-4">
+            <a id="shop-checkout-link" class="btn btn-outline-primary" href="#" target="_blank" rel="noreferrer">
+              <i class="bi bi-shop me-2"></i>Visit the merchandise shop
+            </a>
+          </div>
+        </div>
+      </section>
+
       <section id="gallery" class="py-5 bg-dark text-white">
         <div class="container">
           <div class="text-center mb-4">
@@ -360,6 +408,8 @@
           <a href="#home">Home</a>
           <a href="#about">About</a>
           <a href="#menu">Menu</a>
+          <a href="#order">Order</a>
+          <a href="#shop">Shop</a>
           <a href="#gallery">Gallery</a>
           <a href="#visit">Visit</a>
         </div>

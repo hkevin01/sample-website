@@ -1366,3 +1366,98 @@ Range Finder Coffee is a modern, professional website designed to help small cof
 ## Project License
 
 MIT License. See [LICENSE](LICENSE) for details.
+
+---
+
+## Commerce Integrations
+
+The site now includes two customer-facing commerce entry points:
+
+| Customer need | Provider | How this project connects | What remains provider-managed |
+|---|---|---|---|
+| Order coffee and food for pickup | Square Online | The **Order pickup** button opens the configured Square ordering page | Menu catalog, payment, tax, order tickets, pickup status |
+| Buy beans and branded merchandise | Shopify Storefront API | The **Shop** section loads published products and links customers to checkout | Inventory, payment, shipping, refunds, tax, fulfillment |
+
+This split is practical for a hometown café. Square is strong for in-store menus and pickup operations, while Shopify is strong for merchandise, shipping, inventory, and product management.
+
+> [!IMPORTANT]
+> The public site never receives Square payment secrets or Shopify Admin API secrets. Square pickup uses a hosted ordering page. Shopify uses a public Storefront token, while checkout and payment remain inside Shopify.
+
+### Local demo mode
+
+The project works without commerce credentials. When environment variables are missing:
+
+- the pickup button scrolls visitors to the Visit section and explains that ordering is not connected yet
+- the Shop section displays clearly labeled demo products
+- no fake payment, order, or inventory request is made
+
+This makes the sample easy to present locally while keeping the production boundary honest.
+
+### Enable Square pickup ordering
+
+1. Create or open the business's Square Online ordering page.
+2. Copy the public pickup ordering URL.
+3. Create a local `.env` file from `.env.example`.
+4. Set `VITE_SQUARE_PICKUP_URL` to that URL.
+5. Restart Vite or rebuild the site.
+
+```bash
+cp .env.example .env
+npm run dev
+```
+
+The website hands the customer to Square for the secure checkout flow. A future server-side integration can use Square's Orders and Payments APIs when the business needs a custom cart, live availability, or an integrated kitchen workflow.
+
+### Enable Shopify merchandise
+
+1. Create the Shopify store and add products such as beans, mugs, totes, shirts, and gift sets.
+2. Create a **Storefront API** public token with read access to products.
+3. Set the shop URL, store domain, and Storefront token in `.env`.
+4. Run the site and confirm that published products appear in the Shop section.
+
+```dotenv
+VITE_SHOPIFY_SHOP_URL=https://your-shop.myshopify.com
+VITE_SHOPIFY_STORE_DOMAIN=your-shop.myshopify.com
+VITE_SHOPIFY_STOREFRONT_TOKEN=your-public-storefront-token
+```
+
+The browser queries Shopify's Storefront GraphQL API for the first six published products. Product names, descriptions, prices, images, and product links are rendered into the grid. Customers finish checkout on Shopify's hosted storefront.
+
+### What is not included yet
+
+These require a secure backend or serverless function and are intentionally not simulated in the static site:
+
+- creating Square orders directly from a custom cart
+- handling card numbers or payment tokens
+- private Shopify Admin API access
+- live inventory mutation
+- employee order status management
+- refunds, tax calculation, and fulfillment webhooks
+
+That boundary protects the customer and keeps private credentials out of the browser. When those workflows are needed, the next step is a small server-side commerce service behind the existing frontend.
+
+### Recommended customer flows
+
+```mermaid
+flowchart LR
+   A[Customer opens site] --> B{What do they need?}
+   B -->|Coffee today| C[Order pickup]
+   C --> D[Square hosted checkout]
+   D --> E[Store prepares order]
+   B -->|Take the brand home| F[Shop merchandise]
+   F --> G[Shopify Storefront products]
+   G --> H[Shopify checkout and fulfillment]
+```
+
+### Commerce troubleshooting
+
+| Symptom | Likely cause | Fix |
+|---|---|---|
+| Pickup button says demo mode | `VITE_SQUARE_PICKUP_URL` is empty | Set the public Square ordering URL and restart Vite |
+| Products show demo cards | Shopify variables are missing | Set all three Shopify variables in `.env` |
+| Shopify products do not load | Store domain or token is invalid | Check the Storefront token, domain spelling, and browser console |
+| Product images are blank | A Shopify product has no featured image | Add a featured image in Shopify or use the hosted shop link |
+| Changes do not appear | Vite reads environment variables at startup | Stop and restart `npm run dev`, then rebuild for production |
+
+> [!NOTE]
+> Provider accounts, transaction fees, taxes, shipping rules, refunds, and fulfillment policies belong to Square and Shopify. They should be reviewed with the business owner before launch.
